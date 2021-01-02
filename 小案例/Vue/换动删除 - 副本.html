@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta
+      name="viewport"
+      id="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <script type="text/javascript">
+      (function (doc, win) {
+        var docEl = doc.documentElement,
+          resizeEvt =
+            "orientationchange" in window ? "orientationchange" : "resize",
+          recalc = function () {
+            var clientWidth = docEl.clientWidth;
+            if (!clientWidth) return;
+            docEl.style.fontSize = 20 * (clientWidth / 375) + "px";
+          };
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener("DOMContentLoaded", recalc, false);
+      })(document, window);
+    </script>
+    <style type="text/css">
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .list_ul {
+        list-style: none;
+        overflow: hidden;
+      }
+
+      .page-title {
+        text-align: center;
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        position: relative;
+      }
+
+      .list-item {
+        position: relative;
+        height: 4rem;
+        -webkit-transition: all 0.2s;
+        transition: all 0.2s;
+      }
+
+      .list-item[data-type="0"] {
+        transform: translate3d(0, 0, 0);
+      }
+
+      .list-item[data-type="1"] {
+        transform: translate3d(-5rem, 0, 0);
+      }
+
+      .list-box {
+        padding: 0.5rem;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        justify-content: flex-end;
+        font-size: 0;
+      }
+
+      .list-item .list-img {
+        display: block;
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+
+      .list-item .list-content {
+        padding: 0.25rem 0 0.25rem 0.5rem;
+        position: relative;
+        flex: 1;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .list-item .title {
+        display: block;
+        color: #333;
+        overflow: hidden;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .list-item .tips {
+        display: block;
+        overflow: hidden;
+        font-size: 0.6rem;
+        color: #999;
+        line-height: 1rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .list-item .time {
+        display: block;
+        font-size: 0.6rem;
+        position: absolute;
+        right: 0;
+        top: 0.25rem;
+        color: #666;
+      }
+
+      .list-item .delete {
+        width: 5rem;
+        height: 4rem;
+        background: #ff4949;
+        font-size: 0.85rem;
+        color: #fff;
+        text-align: center;
+        line-height: 4rem;
+        position: absolute;
+        top: 0;
+        right: -5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="app">
+      <div class="page-title">滑动组件</div>
+      <ul class="list_ul">
+        <li class="list-item" v-for="(item,index) in list" data-type="0">
+          <div
+            class="list-box"
+            @touchstart.capture="touchStart"
+            @touchend.capture="touchEnd"
+            @click="skip"
+          >
+            <img class="list-img" :src="item.imgUrl" alt="" />
+            <div class="list-content">
+              <p class="title">{{item.title}}</p>
+              <p class="tips">{{item.tips}}</p>
+              <p class="time">{{item.time}}</p>
+            </div>
+          </div>
+          <div class="delete" @click="deleteItem" :data-index="index">删除</div>
+        </li>
+      </ul>
+    </div>
+    <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+    <script type="text/javascript">
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          list: [
+            {
+              title: "Chrome更新了",
+              imgUrl:
+                "http://img18.house365.com/newcms/2017/03/16/148964317858ca26aacf7b5.jpg",
+              tips: "不再支持Flash视频播放",
+              time: "上午 8:30",
+            },
+            {
+              title: "电影新资讯",
+              imgUrl:
+                "http://img18.house365.com/newcms/2014/08/08/140746636153e43b79c4445.jpg",
+              tips:
+                "电影《红海行动》上映以来票房暴涨，很多国人表示对国产电影有了新的改观",
+              time: "上午 12:00",
+            },
+            {
+              title: "哈哈哈",
+              imgUrl:
+                "http://img18.house365.com/newcms/2016/11/24/14799594365836638ca92a3.jpg",
+              tips: "呵呵呵",
+              time: "下午 17:45",
+            },
+          ],
+          startX: 0,
+          endX: 0,
+        },
+
+        methods: {
+          //跳转
+          skip() {
+            if (this.checkSlide()) {
+              this.restSlide();
+            } else {
+              alert("You click the slide!");
+            }
+          },
+          //滑动开始
+          touchStart(e) {
+            // 记录初始位置
+            this.startX = e.touches[0].clientX;
+          },
+          //滑动结束
+          touchEnd(e) {
+            // 当前滑动的父级元素
+            let parentElement = e.currentTarget.parentElement;
+            // 记录结束位置
+            this.endX = e.changedTouches[0].clientX;
+            // 左滑
+            if (
+              parentElement.dataset.type == 0 &&
+              this.startX - this.endX > 30
+            ) {
+              this.restSlide();
+              parentElement.dataset.type = 1;
+            }
+            // 右滑
+            if (
+              parentElement.dataset.type == 1 &&
+              this.startX - this.endX < -30
+            ) {
+              this.restSlide();
+              parentElement.dataset.type = 0;
+            }
+            this.startX = 0;
+            this.endX = 0;
+          },
+          //判断当前是否有滑块处于滑动状态
+          checkSlide() {
+            let listItems = document.querySelectorAll(".list-item");
+            for (let i = 0; i < listItems.length; i++) {
+              if (listItems[i].dataset.type == 1) {
+                return true;
+              }
+            }
+            return false;
+          },
+          //复位滑动状态
+          restSlide() {
+            let listItems = document.querySelectorAll(".list-item");
+            // 复位
+            for (let i = 0; i < listItems.length; i++) {
+              listItems[i].dataset.type = 0;
+            }
+          },
+          //删除
+          deleteItem(e) {
+            // 当前索引
+            let index = e.currentTarget.dataset.index;
+            // 复位
+            this.restSlide();
+            // 删除
+            this.list.splice(index, 1);
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

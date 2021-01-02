@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h2 v-show="tag==0">首页</h2>
+      <h2 v-show="tag==1">分页</h2>
+      <h2 v-show="tag==2">个人中心</h2>
+
+      <button @click="tag=0">首页</button>
+      <button @click="tag=1">分页</button>
+      <button @click="tag=2">个人中心</button>
+      
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          tag: 0,
+        },
+        methods: {},
+      });
+    </script>
+  </body>
+</html>

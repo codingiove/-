@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue滑动删除</title>
+    <script src="./vue.js"></script>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      header {
+        background: #f7483b;
+        border-bottom: 1px solid #ccc;
+      }
+
+      header h2 {
+        text-align: center;
+        line-height: 54px;
+        font-size: 16px;
+        color: #fff;
+      }
+
+      .list-ul {
+        overflow: hidden;
+      }
+
+      .list-li {
+        line-height: 60px;
+        border-bottom: 1px solid #fcfcfc;
+        position: relative;
+        padding: 0 12px;
+        color: #666;
+        background: #f2f2f2;
+        -webkit-transform: translateX(0px);
+      }
+
+      .btn {
+        position: absolute;
+        top: 0;
+        right: -80px;
+        text-align: center;
+        background: #ffcb20;
+        color: #fff;
+        width: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>消息列表</h2>
+    </header>
+    <section class="list">
+      <ul class="list-ul" v-for="(item,index) in list">
+        <li
+          id="li"
+          class="list-li"
+          @touchstart="touchStart"
+          @touchmove="touchMove"
+          @touchend="touchEnd"
+          :style="deleteSlider"
+        >
+          <div class="con">{{item.name}}</div>
+          <div class="btn" ref="remove">{{item.btn}}</div>
+        </li>
+      </ul>
+    </section>
+  </body>
+  <script>
+    new Vue({
+      el: ".list",
+      data() {
+        return {
+          list: [{ name: "哇，你在干嘛，快点来啊就等你了", btn: "删除" }],
+          startX: 0, // 记录开始位置
+          endX: 0, // 结束位置
+          moveX: 0, // 滑动时的位置
+          disX: 0, // 移动距离
+          deleteSlider: "", // 滑动时的效果,
+        };
+      },
+      methods: {
+        // 记录开始位置
+        touchStart(e) {
+          this.startX = e.touches[0].clientX;
+        },
+        // 手指移动
+        touchMove(e) {
+          // 获取删除按钮的宽度,此宽度为滑块左滑的最大距离
+          let wd = this.$refs.remove[0].offsetWidth;
+          // 滑动时距离浏览器左侧实时距离
+          this.moveX = e.touches[0].clientX;
+          // 起始位置 - 滑动的距离, 得到手指实时偏移距离
+          this.disX = this.startX - this.moveX;
+
+          // 如果是(向右滑动)或者不滑动,不改变滑块的位置
+          if (this.disX < 0 || this.disX == 0) {
+            this.deleteSlider = "transform:translateX(0px)";
+            // 大于 0,表示左滑了,此时滑块开始滑动
+          } else if (this.disX > 0) {
+            // 具体滑动距离我取的是 手指偏移距离 * 1。
+            this.deleteSlider =
+              "transform:translateX(-" + parseInt(this.disX * 1) + "px)";
+            // 最大也只能等于删除按钮宽度
+            if (this.disX * 1 >= wd) {
+              this.deleteSlider = "transform:translateX(-" + wd + "px)";
+            }
+          }
+        },
+        // 离开位置
+        touchEnd(e) {
+          let wd = this.$refs.remove[0].offsetWidth;
+          let endX = e.changedTouches[0].clientX;
+          this.disX = this.startX - endX;
+          //如果距离小于删除按钮一半,强行回到起点
+          if (this.disX < wd / 2) {
+            this.deleteSlider = `transform:translateX(-0px)`;
+          } else {
+            // 大于一半 滑动到最大值
+            this.deleteSlider = `transform:translateX(-${wd}px)`;
+          }
+        },
+      },
+    });
+  </script>
+</html>

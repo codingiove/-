@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      按照价格查询 大于<input type="text" class="start" /> - 小于<input
+        type="text"
+        class="end"
+      />
+      <button class="search">搜索</button>
+      <input type="text" class="ss" />
+      <button class="Find">查询</button>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 200px;">id</th>
+            <th style="width: 200px;">商品</th>
+            <th style="width: 200px;">价格</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <script>
+      var data = [
+        {
+          id: 1,
+          pname: "小米",
+          price: "1000",
+        },
+        {
+          id: 2,
+          pname: "魅族",
+          price: "1810",
+        },
+        {
+          id: 3,
+          pname: "华为",
+          price: "2400",
+        },
+        {
+          id: 4,
+          pname: "OPPO",
+          price: "3200",
+        },
+        {
+          id: 5,
+          pname: "vivo",
+          price: "5500",
+        },
+      ];
+      var search = document.getElementsByClassName("search")[0];
+      var start = document.getElementsByClassName("start")[0];
+      var end = document.getElementsByClassName("end")[0];
+      var tbody = document.getElementsByTagName("tbody")[0];
+      var ss = document.getElementsByClassName("ss")[0];
+      var Find = document.getElementsByClassName("Find")[0];
+
+      setData(data);
+      function setData(mydata) {
+        //先清空原来的数据
+        //一开始进来是先清空在渲染数据,因为js一行一行执行的
+        tbody.innerHTML = "";
+        mydata.forEach((item) => {
+          var tr = document.createElement("tr");
+          tr.innerHTML = `<th>${item.id}</th>
+          <th>${item.pname}</th>
+          <th>${item.price}</th>`;
+          tbody.appendChild(tr);
+        });
+      }
+      search.addEventListener("click", function () {
+        var newdate = data.filter(function (item) {
+          return item.price >= start.value && item.price <= end.value;
+        });
+        setData(newdate);
+      });
+
+      Find.onclick = function() {
+        var arr = []
+        data.filter(function (item) {
+          if (item.pname === ss.value) {
+            arr.push(item)
+            return true;
+          }
+          setData(arr);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+codingiove
+
+1. 添加仓库
+   git init
+   git add .
+   git commit -m "first commit"
+   git branch -M main
+   git remote add origin https://github.com/codingiove/-.git
+   git push -u origin main
+
+2. 更新仓库
+  git add *
+  git commit -m "更新仓库"
+  git push

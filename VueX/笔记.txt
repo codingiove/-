@@ -1,0 +1,103 @@
+ # 1.组件访问State中的第一种方式:
+ this.$store.state.数据名
+ 在template里访问vuex可以省略this,直接 {{$store.state.count}}
+  - 组件访问State中的第二种方式:
+  import { mapState } from "vuex";
+  computed:{
+      ...mapState(["count"]) // 这里写你要用的方法名
+  }
+  <h2>{{count}}</h2>
+
+
+ # 2. mutations 使用方法,不要在 mutations 执行异步操作
+ - `mutations调用方法(1)`
+ mutations定义一个方法,跟 methods 定义方法一样
+  mutations: {
+    plus(state) {
+      state.count++;
+    },
+    Less(state, Pass) {
+      state.count -= Pass;
+    },
+    dianji(state) {
+      state.count -= 10;
+    },
+  },
+ - 然后在要使用的组件中调用这个方法
+ add() {
+     this.$store.commit("plus");
+  },
+ - commit 的作用就是调用 mutations 函数
+   [也可以通过参数来决定每次减几]
+    Less(state, Pass) {
+     state.count -= Pass;
+   },
+    jj(){
+     this.$store.commit("Less",2);
+   }
+
+ - `mutations调用方法(2)`
+   import { mapMutations } from "vuex";
+   [写要调用的函数]
+   methods:{
+    ...mapMutations(["dianji"]),
+    jj(){
+      this.dianji()**可以传参**;
+     }  
+   }   
+  
+ # 3. actions
+  `dispatch 专门来 调用 actions`
+ - 处理异步操作,不能修改直接 state, 但可以触发 mutations 来进行修改
+     
+  actions: {
+    yibuplus(context) {
+      setTimeout(() => {
+        context.commit("plus");
+      }, 1000);
+    },
+  },
+   yibu(){
+    this.$store.dispatch("yibuplus")
+  }
+
+
+ # 4. getters
+  - 对state进行包装,**但不会修改原数据**, `会形成一个新的数据 getters`
+   getters: {
+    hhh(state) {
+      return "最新数量" + state.count + "";
+    },
+  }
+  调用方法
+   (1)this.$store.getters.数据名
+     import { mapGetters} from "vuex";
+   (2)computed:{
+    ...mapGetters(["hhh"])
+   },
+  使用方法
+   (1)<h2>{{$store.getters.hhh}}</h2>
+   (2)<h2>当前最新的count值为:{{hhh}}</h2>
+
+
+总结:
+ (1) `commit 作用就是调用 mutations 函数`
+ (2) `dispatch 作用就是调用 actions 函数`
+...mapState([''])   和 ...mapGetters([''])映射需要写在 **computed** 中而
+...mapActions(['']) 和 ...mapMutations(['dianji'])映射需要写在 **methods** 中
+<button @click="dianji">-</button>
+映射就是把它写好的东西拿过来用
+
+
+
+## getters
+(1) 补充
+   - getters类似于计算属性,当数据经过一系列变化后,在进行展示(对数组整合,相加等等)
+getters: {
+   hhh(state) {
+      return "最新数量" + state.count + "";
+    },
+    add(state){
+      return state.count + 1
+    }
+  },

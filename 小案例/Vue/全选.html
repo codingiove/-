@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./vue.js"></script>
+  </head>
+  <body>
+    <div id="dome">
+      <table class="dome">
+        <thead>
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                v-model="checkAll"
+                @change="changecheckAll"
+              />
+            </th>
+            <th>用户姓名</th>
+            <th>用户姓别</th>
+            <th>城市</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, i) in lists" :key="i">
+            <th>
+              <input
+                type="checkbox"
+                v-model="item.check"
+                @change="changecheck"
+              />
+            </th>
+            <th>{{ item.name }}</th>
+            <th>{{ item.sex }}</th>
+            <th>{{ item.sc }}</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script>
+      new Vue({
+        el: "#dome",
+        data() {
+          return {
+            lists: [
+              { name: "小牛", sex: "男", sc: "岳阳", check: true },
+              { name: "小妞", sex: "女", sc: "岳阳", check: true },
+              { name: "小张", sex: "女", sc: "岳阳", check: false },
+              { name: "小明", sex: "女", sc: "岳阳", check: false },
+              { name: "小红", sex: "女", sc: "岳阳", check: false },
+              { name: "小白", sex: "女", sc: "岳阳", check: false },
+            ],
+            checkAll: false,//默认全选是不打钩
+          };
+        },
+        methods: {
+          //当我点击 全选 就会得到 true 然后把 true 赋值给lists里的 check
+          changecheckAll() {
+            this.lists.forEach(item => {
+              console.log(this.checkAll);
+              return item.check = this.checkAll
+            });
+          },
+          changecheck() {
+            this.checkAll = this.lists.every(item => item.check);
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

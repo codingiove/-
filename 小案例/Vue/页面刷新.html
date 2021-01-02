@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zhw">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="add">刷新</button>
+      <h2 v-if="isRouterAlive">{{hhhh}}</h2>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            isRouterAlive: true,
+            hhhh: "666",
+          };
+        },
+        methods: {
+          reload() {
+            this.isRouterAlive = false;
+            this.$nextTick(function () {
+              this.isRouterAlive = true;
+              this.hhhh = "8888";
+            });
+          },
+          add() {
+            this.reload();
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
